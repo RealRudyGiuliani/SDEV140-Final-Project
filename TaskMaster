@@ -1,0 +1,14 @@
+from breezypythongui import EasyFrame
+
+
+class Tasks(EasyFrame):
+    def __init__(self):
+        EasyFrame.__init__(self, title="TaskMaster")  # Window title
+        self.tasks = []
+        self.addLabel(text="Enter your tasks below:", row=0, column=0, columnspan=4)
+        self.inputfield = self.addTextField(text="", row=1, column=0, columnspan=4, width=60) # add width, height
+        self.addTask = self.addButton(text="Add Task", row=3, column=0, columnspan=2, command=self.addtasks)
+        self.listbox = self.addListbox(row=4, column=0, rowspan=6, height=20)
+        self.saveTasks = self.addButton(text="Save Tasklist", row=10, column=0)
+        self.loadTasks = self.addButton(text="Load Tasklist", row=11, column=0)
+        self.deleteTasks = self.addButton(text="Delete Task", row=12, column=0)
