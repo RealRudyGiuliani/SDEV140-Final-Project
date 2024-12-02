@@ -12,3 +12,11 @@ class Tasks(EasyFrame):
         self.saveTasks = self.addButton(text="Save Tasklist", row=10, column=0)
         self.loadTasks = self.addButton(text="Load Tasklist", row=11, column=0)
         self.deleteTasks = self.addButton(text="Delete Task", row=12, column=0)
+
+
+def main():
+    Tasks().mainloop()
+
+
+if __name__ == "__main__":
+    main()
