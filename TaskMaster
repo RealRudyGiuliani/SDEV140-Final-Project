@@ -11,7 +11,7 @@ class Tasks(EasyFrame):
         self.listbox = self.addListbox(row=4, column=0, rowspan=6, height=20)
         self.saveTasks = self.addButton(text="Save Tasklist", row=10, column=0)
         self.loadTasks = self.addButton(text="Load Tasklist", row=11, column=0)
-        self.deleteTasks = self.addButton(text="Delete Task", row=12, column=0)
+        self.deleteTasks = self.addButton(text="Complete Task", row=12, column=0)
 
 
 def main():
