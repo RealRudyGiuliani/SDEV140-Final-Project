@@ -2,7 +2,9 @@ from breezypythongui import EasyFrame
 
 
 class Tasks(EasyFrame):
+    """Displays the window"""
     def __init__(self):
+        """Sets up the window, label, text input field, and buttons"""
         EasyFrame.__init__(self, title="TaskMaster")  # Window title
         self.tasks = []
         self.addLabel(text="Enter your tasks below:", row=0, column=0, columnspan=4)
@@ -15,6 +17,7 @@ class Tasks(EasyFrame):
 
 
 def main():
+    """Instantiates and opens the window"""
     Tasks().mainloop()
 
 
