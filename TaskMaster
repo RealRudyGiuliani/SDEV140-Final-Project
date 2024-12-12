@@ -109,7 +109,7 @@ class MainWindow:
         if task.isspace():
             messagebox.showwarning(title="Error",  # Shows error if an entry is only whitespace characters
                                    message="You may only enter numbers or characters!")
-
+       self.listbox.delete(self.listbox.index("end") - 1)  # Deletes the whitespace entry
     def completetask(self):
         """Removes completed tasks from the task listbox and appends them to the completed task list"""
         selectedtask = self.listbox.curselection()  # Uses tkinter curseselection to select a task
