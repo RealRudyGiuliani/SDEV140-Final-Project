@@ -1,25 +1,169 @@
-from breezypythongui import EasyFrame
+"""
+Author: Kyle Heath
+Date Written: 12/12/2024
+Assignment: Module 08 Final Project
+This program is a tkinter GUI to-do list manager called TaskMaster
+
+Icons: Add Task button: https://www.iconarchive.com/show/windows-8-icons-by-icons8/Programming-Add-Property-icon.html
+       Save Task button: https://www.iconarchive.com/show/windows-8-icons-by-icons8/Programming-Save-As-icon.html
+       Load Task button: https://www.iconarchive.com/show/windows-8-icons-by-icons8/Programming-Save-icon.html
+"""
+
+import tkinter as tk
+from tkinter import messagebox, filedialog
+from tkinter import PhotoImage
 
 
-class Tasks(EasyFrame):
+class MainWindow:
     """Displays the window"""
-    def __init__(self):
-        """Sets up the window, label, text input field, and buttons"""
-        EasyFrame.__init__(self, title="TaskMaster")  # Window title
-        self.tasks = []
-        self.addLabel(text="Enter your tasks below:", row=0, column=0, columnspan=4)
-        self.inputfield = self.addTextField(text="", row=1, column=0, columnspan=4, width=60) # add width, height
-        self.addTask = self.addButton(text="Add Task", row=3, column=0, columnspan=2, command=self.addtasks)
-        self.listbox = self.addListbox(row=4, column=0, rowspan=6, height=20)
-        self.saveTasks = self.addButton(text="Save Tasklist", row=10, column=0)
-        self.loadTasks = self.addButton(text="Load Tasklist", row=11, column=0)
-        self.deleteTasks = self.addButton(text="Complete Task", row=12, column=0)
 
+    def __init__(self, root):
+        """Sets up the window, labels, text input field, listbox, images, and buttons"""
+        self.root = root
+        self.root.title("TaskMaster")
+        root.geometry("400x650")
+        self.tasks = []  # List to hold tasks entered by the user
+        self.completedTasks = []  # List to hold tasks completed by the user
 
-def main():
-    """Instantiates and opens the window"""
-    Tasks().mainloop()
+        # TOP LABEL
+        self.toplabel = tk.Label(root,  # Label at the top of the GUI
+                                 text="Enter a task below:",
+                                 font="Arial")
+        self.toplabel.pack(padx=10,
+                           pady=10)
+
+        # TASK ENTRY
+        self.taskbox = tk.Entry(root,  # Text entry box for tasks
+                                width=40,
+                                font="Arial")
+        self.taskbox.pack(padx=10, pady=10)
+
+        # ADD TASK BUTTON WITH IMAGE
+        self.addimage = PhotoImage(file="AddTaskSMall.png")  # Image for the 'Add Task' button
+        self.addbutton = tk.Button(root,  # 'Add Task' button which calls the addtask function
+                                   image=self.addimage,
+                                   command=self.addtask)
+        self.addbutton.pack(pady=10)
+        self.addlabel = tk.Label(root, text="Add Task")  # The 'Add Task' label underneath the button
+        self.addlabel.pack(pady=0)
+
+        # LISTBOX
+        self.listbox = tk.Listbox(root,  # Listbox that displays the tasks input from the entry box
+                                  width=40,
+                                  height=10,
+                                  font="Arial",
+                                  selectbackground="Grey")
+        self.listbox.pack(padx=10, pady=10)
+
+        # COMPLETE TASK BUTTON
+        self.complete = tk.Button(root,  # 'Complete Task' button which calls the completetask function
+                                  text="Complete Task",
+                                  font="Arial",
+                                  command=self.completetask)
+        self.complete.pack(pady=5)
+
+        # SHOW COMPLETED TASKS BUTTON
+        self.showcompleted = tk.Button(root,  # 'Show Completed Tasks' button calls the showcompleted function
+                                       text="Show Completed Tasks",
+                                       font="Arial",
+                                       command=self.showcompleted)
+        self.showcompleted.pack(pady=5)
+
+        # SAVE TASKS BUTTON
+        self.saveimage = PhotoImage(file="SaveTask.png")  # Image for the button to save tasks
+        self.savebutton = tk.Button(root,  # Button to save tasks which calls the savetasks function
+                                    image=self.saveimage,
+                                    command=self.savetasks)
+        self.savebutton.pack(padx=50,
+                             pady=5,
+                             side="left",
+                             anchor="e")
+
+        # LOAD TASKS BUTTON
+        self.loadimage = PhotoImage(file="LoadTask.png")  # Image for the button to load tasks
+        self.loadbutton = tk.Button(root,
+                                    image=self.loadimage,
+                                    command=self.loadtasks)  # Button load task list which calls the loadtasks function
+
+        self.loadbutton.pack(padx=50,
+                             pady=5,
+                             side="right",
+                             anchor="w")
+
+        # EXIT BUTTON
+        self.exitbutton = tk.Button(root, text="Exit",
+                                    command=self.exit)  # Button to exit the program which calls the exit function
+        self.exitbutton.pack(pady=5,
+                             side="bottom")
+
+    def addtask(self):
+        """Adds tasks from the input field to the task listbox with the add button"""
+        task = self.taskbox.get()  # Gets a task from the entry box
+        if task:
+            self.tasks.append(task)  # Adds a task to the list of tasks
+            self.listbox.insert(tk.END, task)  # Adds the entered task to the task listbox
+            self.taskbox.delete(0, tk.END)  # Clears the entry box
+        else:
+            messagebox.showwarning(title="Error",  # Shows error if nothing is entered into the task entry box
+                                   message="No Task Entered!")
+        if task.isspace():
+            messagebox.showwarning(title="Error",  # Shows error if an entry is only whitespace characters
+                                   message="You may only enter numbers or characters!")
+
+    def completetask(self):
+        """Removes completed tasks from the task listbox and appends them to the completed task list"""
+        selectedtask = self.listbox.curselection()  # Uses tkinter curseselection to select a task
+        if selectedtask:
+            task = self.listbox.get(selectedtask)  # Gets selected task from the listbox
+            self.listbox.delete(selectedtask)  # Clears the task from the listbox
+            self.completedTasks.append(task)  # Adds the task to the completed task list
+        else:
+            messagebox.showwarning(title="Error",  # Shows error if no tasks are selected to complete
+                                   message="No Tasks Selected!")
+
+    def showcompleted(self):
+        """Opens a second window that displays a list of completed tasks"""
+        completedwindow = tk.Toplevel(self.root)  # The new window
+        completedwindow.title("Completed Tasks")
+        completedlabel = tk.Label(completedwindow,  # Label at top of window
+                                  text="Completed Tasks:",
+                                  font="Arial")
+        completedlabel.pack(pady=5)
+        completedlistbox = tk.Listbox(completedwindow,  # Listbox that displays the tasks marked as completed
+                                      width=40,
+                                      height=20,
+                                      font="Arial")
+        completedlistbox.pack(pady=10)
+        for task in self.completedTasks:  # For loop adds tasks from the completed tasks list to the listbox
+            completedlistbox.insert(tk.END, task)
+
+    def savetasks(self):
+        """Opens a save file dialog allowing the user to save a task list to a text file"""
+        filename = filedialog.asksaveasfilename(defaultextension=".txt",  # Opens a save file dialog box
+                                                filetypes=[("Text files", "*.txt")])
+        if filename:
+            with open(filename, "w") as file:  # Writes tasks from the task list to the text file
+                for task in self.tasks:
+                    file.write(task + "\n")
+
+    def loadtasks(self):
+        """Opens a save file dialog allowing the user to load a task list from a text file"""
+        filename = filedialog.askopenfilename(title="Load task list",  # Opens an open file dialog box
+                                              initialdir="/",
+                                              filetypes=[("Text files", "*.txt")])
+        if filename:
+            with open(filename, "r") as file:  # Reads task lines from a file and inserts them into the listbox
+                self.tasks = file.readlines()
+                for task in self.tasks:
+                    self.listbox.insert(tk.END, task)
+
+    def exit(self):
+        """Closes the TaskMaster window"""
+        root.destroy()
 
 
 if __name__ == "__main__":
-    main()
+    """Instantiates and opens the window"""
+    root = tk.Tk()
+    app = MainWindow(root)
+    root.mainloop()
